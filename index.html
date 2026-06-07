@@ -4,95 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendario Interactivo Copa Mundial FIFA 2026</title>
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <style>
-  :root {
-    --green: #16a34a;
-    --green-dark: #15803d;
-    --gold: #d97706;
-    --red: #dc2626;
-  }
-  @media (prefers-color-scheme: dark) {
-    body { background: #0f172a; color: #f1f5f9; }
-    .card { background: #1e293b; border-color: #334155; }
-    .feature-icon { background: #1e3a5f; }
-    .badge { background: #1e3a2e; color: #4ade80; }
-    .divider { border-color: #334155; }
-    .muted { color: #94a3b8; }
-  }
-  @media (prefers-color-scheme: light) {
-    body { background: #f8fafc; color: #0f172a; }
-    .card { background: #ffffff; border-color: #e2e8f0; }
-    .feature-icon { background: #dbeafe; }
-    .badge { background: #dcfce7; color: #15803d; }
-    .divider { border-color: #e2e8f0; }
-    .muted { color: #64748b; }
-  }
-  .btn-buy {
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 14px rgba(22,163,74,0.4);
-  }
-  .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(22,163,74,0.5); }
-  .btn-buy:active { transform: translateY(0); }
-  .hero-bg {
-    background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #0f766e 100%);
-  }
-  .flag { font-size: 1.5rem; }
-  .pulse { animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
-  .card { border-width: 1px; border-style: solid; border-radius: 1rem; }
-  .feature-icon { width: 48px; height: 48px; border-radius: 12px; display:flex; align-items:center; justify-content:center; font-size: 1.4rem; flex-shrink:0; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#0f172a;}
+.hero{background:linear-gradient(135deg,#064e3b 0%,#065f46 40%,#0f766e 100%);padding:3rem 1.5rem 4rem;text-align:center;position:relative;overflow:hidden;}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;color:#fff;margin:0 0 0.75rem;line-height:1.2;}
+.hero p{font-size:1.05rem;color:#a7f3d0;max-width:500px;margin:0 auto 2rem;line-height:1.6;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:999px;padding:6px 16px;margin-bottom:1.5rem;}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.btn-buy{display:inline-block;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;text-decoration:none;padding:1rem 2.5rem;font-size:1.1rem;font-weight:700;border-radius:999px;box-shadow:0 4px 14px rgba(22,163,74,0.4);transition:transform 0.15s,box-shadow 0.15s;margin-bottom:0.75rem;}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(22,163,74,0.5);}
+.flags{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:2rem;font-size:1.5rem;}
+.mockup{max-width:680px;margin:-2rem auto 0;padding:0 1rem;}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,0.1);}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.stat{background:#166534;border-radius:6px;padding:6px;text-align:center;}
+.stat-n{font-size:16px;font-weight:700;color:#fff;}
+.stat-l{font-size:9px;color:#a7f3d0;}
+.tabs-mock{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.tab-mock{font-size:10px;padding:4px 10px;border-radius:999px;}
+.tab-active{background:#16a34a;color:#fff;font-weight:600;}
+.tab-inactive{background:#e2e8f0;color:#475569;}
+.match-row{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:6px;font-size:11px;margin-bottom:5px;}
+.score-box{width:26px;height:22px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;font-weight:700;background:#f8fafc;}
+.features{max-width:680px;margin:3rem auto;padding:0 1.5rem;}
+.features h2{font-size:1.4rem;font-weight:700;text-align:center;margin-bottom:0.5rem;}
+.features-sub{text-align:center;color:#64748b;font-size:14px;margin-bottom:1.5rem;}
+.feature{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1rem;display:flex;align-items:flex-start;gap:14px;margin-bottom:10px;}
+.ficon{width:44px;height:44px;border-radius:10px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ftitle{font-weight:700;margin-bottom:3px;}
+.fdesc{font-size:13px;color:#64748b;}
+.how{max-width:680px;margin:2rem auto;padding:0 1.5rem;}
+.how h2{font-size:1.4rem;font-weight:700;text-align:center;margin-bottom:1.5rem;}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;}
+.how-icon{font-size:2rem;margin-bottom:8px;}
+.how-title{font-weight:700;margin-bottom:4px;font-size:14px;}
+.how-desc{font-size:12px;color:#64748b;}
+.cta{max-width:680px;margin:2rem auto 3rem;padding:0 1.5rem;}
+.cta-box{background:linear-gradient(135deg,#064e3b,#0f766e);border-radius:1.25rem;padding:2.5rem 2rem;text-align:center;}
+.cta-box h2{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:0.75rem;}
+.cta-box p{color:#a7f3d0;margin-bottom:1.5rem;font-size:14px;}
+.note{font-size:12px;color:#6ee7b7;margin-top:0.75rem;}
+.footer{text-align:center;padding:1.5rem;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;}
 </style>
 </head>
-<body style="margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;">
+<body>
 
-<!-- HERO -->
-<div class="hero-bg" style="padding: 3rem 1.5rem 4rem; text-align:center; position:relative; overflow:hidden;">
-  <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);"></div>
-  <div style="position:absolute;bottom:-80px;left:-40px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,0.03);"></div>
-
-  <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:999px;padding:6px 16px;margin-bottom:1.5rem;">
-    <span class="pulse" style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;"></span>
+<div class="hero">
+  <div class="badge">
+    <span class="dot"></span>
     <span style="font-size:13px;color:#d1fae5;font-weight:500;">Torneo en curso — 11 jun al 19 jul 2026</span>
   </div>
-
-  <div style="font-size:3.5rem;margin-bottom:0.5rem;">⚽</div>
-  <h1 style="font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;color:#ffffff;margin:0 0 0.75rem;line-height:1.2;">
-    Calendario Interactivo<br>
-    <span style="color:#4ade80;">Copa Mundial FIFA 2026</span>
-  </h1>
-  <p style="font-size:1.1rem;color:#a7f3d0;max-width:500px;margin:0 auto 2rem;line-height:1.6;">
-    Anota los resultados de los <strong style="color:#fff;">104 partidos</strong>, ve quién avanza automáticamente y sigue el torneo completo desde tu computadora.
-  </p>
-
-  <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:2rem;">
-    <span class="flag">🇺🇸</span>
-    <span class="flag">🇲🇽</span>
-    <span class="flag">🇨🇦</span>
-    <span class="flag">🇧🇷</span>
-    <span class="flag">🇦🇷</span>
-    <span class="flag">🇫🇷</span>
-    <span class="flag">🇩🇪</span>
-    <span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-    <span class="flag">🇪🇸</span>
-    <span class="flag">🇵🇹</span>
-  </div>
-
-  <a data-gumroad-action="buy" class="btn-buy" style="display:inline-block;padding:1rem 2.5rem;font-size:1.1rem;font-weight:700;border-radius:999px;text-decoration:none;letter-spacing:0.02em;">
-    ⬇️ Descargar ahora — $4.99 USD
-  </a>
-  <div style="margin-top:0.75rem;font-size:12px;color:#a7f3d0;">
-    Descarga instantánea • Sin suscripción • Un solo pago
-  </div>
+  <div style="font-size:3rem;margin-bottom:0.5rem;">⚽</div>
+  <h1>Calendario Interactivo<br><span style="color:#4ade80;">Copa Mundial FIFA 2026</span></h1>
+  <p>Anota los resultados de los <strong style="color:#fff;">104 partidos</strong>, ve quién avanza automáticamente y sigue el torneo completo desde tu computadora.</p>
+  <div class="flags">🇺🇸🇲🇽🇨🇦🇧🇷🇦🇷🇫🇷🇩🇪🏴󠁧󠁢󠁥󠁮󠁧󠁿🇪🇸🇵🇹</div>
+  <a href="https://magdascribe.gumroad.com/l/bxami" target="_blank" class="btn-buy">⬇️ Descargar ahora — $4.99 USD</a>
+  <div style="font-size:12px;color:#a7f3d0;">Descarga instantánea • Sin suscripción • Un solo pago</div>
 </div>
 
-<!-- PREVIEW MOCKUP -->
-<div style="max-width:700px;margin:-2rem auto 0;padding:0 1rem;">
-  <div class="card" style="padding:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+<div class="mockup">
+  <div class="card">
     <div style="background:#1e3a2e;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
       <span style="font-size:1.2rem;">🏆</span>
       <div>
@@ -100,141 +73,69 @@
         <div style="font-size:11px;color:#6ee7b7;">48 equipos • 104 partidos • EUA, Canadá, México</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
-      <div style="background:#16a34a;border-radius:6px;padding:6px;text-align:center;">
-        <div style="font-size:16px;font-weight:700;color:#fff;">0</div>
-        <div style="font-size:9px;color:#a7f3d0;">Jugados</div>
-      </div>
-      <div style="background:#166534;border-radius:6px;padding:6px;text-align:center;">
-        <div style="font-size:16px;font-weight:700;color:#fff;">0</div>
-        <div style="font-size:9px;color:#a7f3d0;">Goles</div>
-      </div>
-      <div style="background:#166534;border-radius:6px;padding:6px;text-align:center;">
-        <div style="font-size:16px;font-weight:700;color:#fff;">12</div>
-        <div style="font-size:9px;color:#a7f3d0;">Grupos</div>
-      </div>
-      <div style="background:#166534;border-radius:6px;padding:6px;text-align:center;">
-        <div style="font-size:16px;font-weight:700;color:#fff;">48</div>
-        <div style="font-size:9px;color:#a7f3d0;">Equipos</div>
-      </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n">0</div><div class="stat-l">Jugados</div></div>
+      <div class="stat"><div class="stat-n">0</div><div class="stat-l">Goles</div></div>
+      <div class="stat"><div class="stat-n">12</div><div class="stat-l">Grupos</div></div>
+      <div class="stat"><div class="stat-n">48</div><div class="stat-l">Equipos</div></div>
     </div>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;">
-      <span style="background:#16a34a;color:#fff;font-size:10px;padding:4px 10px;border-radius:999px;font-weight:600;">Fase de Grupos</span>
-      <span style="background:#e2e8f0;color:#475569;font-size:10px;padding:4px 10px;border-radius:999px;">Ronda de 32</span>
-      <span style="background:#e2e8f0;color:#475569;font-size:10px;padding:4px 10px;border-radius:999px;">Cuartos</span>
-      <span style="background:#e2e8f0;color:#475569;font-size:10px;padding:4px 10px;border-radius:999px;">Semifinales</span>
-      <span style="background:#e2e8f0;color:#475569;font-size:10px;padding:4px 10px;border-radius:999px;">Final</span>
+    <div class="tabs-mock">
+      <span class="tab-mock tab-active">Fase de Grupos</span>
+      <span class="tab-mock tab-inactive">Ronda de 32</span>
+      <span class="tab-mock tab-inactive">Cuartos</span>
+      <span class="tab-mock tab-inactive">Semifinales</span>
+      <span class="tab-mock tab-inactive">Final</span>
     </div>
-    <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;">
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f0fdf4;border-radius:6px;font-size:11px;">
-        <span style="color:#666;min-width:36px;">11 jun</span>
-        <span style="flex:1;font-weight:600;">México vs Sudáfrica</span>
-        <input type="number" style="width:26px;height:22px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;font-weight:700;" placeholder="-" disabled>
-        <span style="color:#aaa;">–</span>
-        <input type="number" style="width:26px;height:22px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;font-weight:700;" placeholder="-" disabled>
-        <span style="color:#aaa;font-size:10px;">Cd. México</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f8fafc;border-radius:6px;font-size:11px;">
-        <span style="color:#666;min-width:36px;">12 jun</span>
-        <span style="flex:1;font-weight:600;">EUA vs Paraguay</span>
-        <input type="number" style="width:26px;height:22px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;font-weight:700;" placeholder="-" disabled>
-        <span style="color:#aaa;">–</span>
-        <input type="number" style="width:26px;height:22px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;font-weight:700;" placeholder="-" disabled>
-        <span style="color:#aaa;font-size:10px;">Los Ángeles</span>
-      </div>
-      <div style="text-align:center;font-size:10px;color:#94a3b8;padding:4px;">+ 100 partidos más...</div>
+    <div class="match-row" style="background:#f0fdf4;">
+      <span style="color:#666;min-width:36px;">11 jun</span>
+      <span style="flex:1;font-weight:600;">México vs Sudáfrica</span>
+      <div class="score-box">-</div>
+      <span style="color:#aaa;">–</span>
+      <div class="score-box">-</div>
+      <span style="color:#aaa;font-size:10px;">Cd. México</span>
     </div>
+    <div class="match-row" style="background:#f8fafc;">
+      <span style="color:#666;min-width:36px;">12 jun</span>
+      <span style="flex:1;font-weight:600;">EUA vs Paraguay</span>
+      <div class="score-box">-</div>
+      <span style="color:#aaa;">–</span>
+      <div class="score-box">-</div>
+      <span style="color:#aaa;font-size:10px;">Los Ángeles</span>
+    </div>
+    <div style="text-align:center;font-size:10px;color:#94a3b8;padding:6px;">+ 100 partidos más...</div>
   </div>
 </div>
 
-<!-- FEATURES -->
-<div style="max-width:700px;margin:3rem auto;padding:0 1.5rem;">
-  <h2 style="font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:0.5rem;">Todo lo que incluye</h2>
-  <p class="muted" style="text-align:center;margin-bottom:2rem;font-size:14px;">Un archivo, todo el Mundial</p>
+<div class="features">
+  <h2>Todo lo que incluye</h2>
+  <p class="features-sub">Un archivo, todo el Mundial</p>
+  <div class="feature"><div class="ficon">📊</div><div><div class="ftitle">Tabla de posiciones automática</div><div class="fdesc">Ingresa los goles y los puntos, diferencia de goles y clasificados se calculan solos en los 12 grupos.</div></div></div>
+  <div class="feature"><div class="ficon">🏆</div><div><div class="ftitle">Todas las rondas eliminatorias</div><div class="fdesc">Ronda de 32, Cuartos, Semifinales y Gran Final — con espacio para anotar cada resultado.</div></div></div>
+  <div class="feature"><div class="ficon">💾</div><div><div class="ftitle">Guarda tus resultados automáticamente</div><div class="fdesc">Cierra y vuelve a abrir — tus datos siguen ahí. No pierdes nada.</div></div></div>
+  <div class="feature"><div class="ficon">📴</div><div><div class="ftitle">Sin internet, sin apps, sin suscripción</div><div class="fdesc">Funciona directo en tu navegador (Chrome, Edge, Safari, Firefox). Doble clic y listo.</div></div></div>
+  <div class="feature"><div class="ficon">🌍</div><div><div class="ftitle">Los 48 equipos, los 104 partidos</div><div class="fdesc">Grupos A al L con todos los equipos confirmados, fechas y sedes incluidas.</div></div></div>
+</div>
 
-  <div style="display:flex;flex-direction:column;gap:12px;">
-    <div class="card" style="padding:1rem;display:flex;align-items:flex-start;gap:14px;">
-      <div class="feature-icon">📊</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:3px;">Tabla de posiciones automática</div>
-        <div class="muted" style="font-size:13px;">Ingresa los goles y los puntos, diferencia de goles y clasificados se calculan solos en los 12 grupos.</div>
-      </div>
-    </div>
-    <div class="card" style="padding:1rem;display:flex;align-items:flex-start;gap:14px;">
-      <div class="feature-icon">🏆</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:3px;">Todas las rondas eliminatorias</div>
-        <div class="muted" style="font-size:13px;">Ronda de 32, Cuartos de Final, Semifinales y Gran Final — con espacio para anotar cada resultado.</div>
-      </div>
-    </div>
-    <div class="card" style="padding:1rem;display:flex;align-items:flex-start;gap:14px;">
-      <div class="feature-icon">💾</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:3px;">Guarda tus resultados automáticamente</div>
-        <div class="muted" style="font-size:13px;">Cierra y vuelve a abrir — tus datos siguen ahí. No pierdes nada.</div>
-      </div>
-    </div>
-    <div class="card" style="padding:1rem;display:flex;align-items:flex-start;gap:14px;">
-      <div class="feature-icon">📴</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:3px;">Sin internet, sin apps, sin suscripción</div>
-        <div class="muted" style="font-size:13px;">Funciona directo en tu navegador (Chrome, Edge, Safari, Firefox). Doble clic y listo.</div>
-      </div>
-    </div>
-    <div class="card" style="padding:1rem;display:flex;align-items:flex-start;gap:14px;">
-      <div class="feature-icon">🌍</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:3px;">Los 48 equipos, los 104 partidos</div>
-        <div class="muted" style="font-size:13px;">Grupos A al L con todos los equipos confirmados, fechas y sedes incluidas.</div>
-      </div>
-    </div>
+<div class="how">
+  <h2>Cómo funciona</h2>
+  <div class="how-grid">
+    <div><div class="how-icon">⬇️</div><div class="how-title">1. Compra y descarga</div><div class="how-desc">Pago seguro por Gumroad. Recibes el archivo al instante.</div></div>
+    <div><div class="how-icon">🖱️</div><div class="how-title">2. Abre</div><div class="how-desc">Doble clic en el archivo — se abre en tu navegador.</div></div>
+    <div><div class="how-icon">⚽</div><div class="how-title">3. Disfruta</div><div class="how-desc">Anota resultados y sigue el Mundial partido a partido.</div></div>
   </div>
 </div>
 
-<!-- DIVIDER -->
-<div class="divider" style="border-top-width:1px;border-top-style:solid;max-width:700px;margin:0 auto;"></div>
-
-<!-- HOW IT WORKS -->
-<div style="max-width:700px;margin:3rem auto;padding:0 1.5rem;">
-  <h2 style="font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:2rem;">Cómo funciona</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;text-align:center;">
-    <div>
-      <div style="font-size:2rem;margin-bottom:8px;">⬇️</div>
-      <div style="font-weight:700;margin-bottom:4px;">1. Descarga</div>
-      <div class="muted" style="font-size:13px;">Compra y descarga el archivo <strong>mundial2026.html</strong></div>
-    </div>
-    <div>
-      <div style="font-size:2rem;margin-bottom:8px;">🖱️</div>
-      <div style="font-weight:700;margin-bottom:4px;">2. Abre</div>
-      <div class="muted" style="font-size:13px;">Doble clic en el archivo — se abre en tu navegador</div>
-    </div>
-    <div>
-      <div style="font-size:2rem;margin-bottom:8px;">⚽</div>
-      <div style="font-weight:700;margin-bottom:4px;">3. Disfruta</div>
-      <div class="muted" style="font-size:13px;">Anota resultados y sigue el Mundial partido a partido</div>
-    </div>
-  </div>
-</div>
-
-<!-- CTA FINAL -->
-<div style="max-width:700px;margin:0 auto 3rem;padding:0 1.5rem;">
-  <div class="hero-bg" style="border-radius:1.25rem;padding:2.5rem 2rem;text-align:center;">
+<div class="cta">
+  <div class="cta-box">
     <div style="font-size:2rem;margin-bottom:0.75rem;">🏆</div>
-    <h2 style="font-size:1.5rem;font-weight:800;color:#fff;margin:0 0 0.75rem;">¿Listo para el Mundial?</h2>
-    <p style="color:#a7f3d0;margin:0 0 1.5rem;font-size:14px;">Un solo pago. Descarga instantánea. Sin complicaciones.</p>
-    <a data-gumroad-action="buy" class="btn-buy" style="display:inline-block;padding:0.9rem 2.5rem;font-size:1rem;font-weight:700;border-radius:999px;text-decoration:none;">
-      ⬇️ Obtener el Calendario — $4.99 USD
-    </a>
-    <div style="margin-top:0.75rem;font-size:12px;color:#6ee7b7;">
-      Pago seguro • Descarga inmediata • Garantía Gumroad
-    </div>
+    <h2>¿Listo para el Mundial?</h2>
+    <p>Un solo pago. Descarga instantánea. Sin complicaciones.</p>
+    <a href="https://magdascribe.gumroad.com/l/bxami" target="_blank" class="btn-buy">⬇️ Obtener el Calendario — $4.99 USD</a>
+    <div class="note">Pago seguro • Descarga inmediata • Garantía Gumroad</div>
   </div>
 </div>
 
-<!-- FOOTER -->
-<div style="text-align:center;padding:1.5rem;border-top:1px solid #e2e8f0;">
-  <p class="muted" style="font-size:12px;margin:0;">Copa Mundial FIFA 2026 • Calendario Interactivo • Descarga digital</p>
-</div>
+<div class="footer">Copa Mundial FIFA 2026 • Calendario Interactivo • Descarga digital</div>
 
 </body>
 </html>
