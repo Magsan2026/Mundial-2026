@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Copa Mundial FIFA 2026 — Calendario Interactivo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a1a;padding:0.75rem;font-size:16px}
+h1{font-size:18px;font-weight:700;margin-bottom:2px}
+.subtitle{font-size:12px;color:#666;margin-bottom:0.75rem}
+
+/* HEADER */
+.header-row{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding:12px 14px;background:#fff;border-radius:14px;border:1px solid #e0e0e0;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.trophy{font-size:26px}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:0.75rem}
+.stat-card{background:#fff;border-radius:12px;padding:10px 4px;text-align:center;border:1px solid #e0e0e0}
+.stat-num{font-size:20px;font-weight:700;color:#1a1a1a}
+.stat-lbl{font-size:10px;color:#888;margin-top:2px}
+
+/* TABS — scrollable horizontally on mobile */
+.tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:0.75rem;padding-bottom:2px}
+.tabs{display:flex;gap:6px;border-bottom:1px solid #ddd;padding-bottom:8px;width:max-content;min-width:100%}
+.tab{padding:10px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap;transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tab.active{background:#1a56db;color:#fff;border-color:#1a56db}
+.section{display:none}.section.active{display:block}
+
+/* GROUPS */
+.group-grid{display:flex;flex-direction:column;gap:10px}
+.group-card{background:#fff;border:1px solid #e0e0e0;border-radius:14px;padding:0.9rem;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.group-title{font-size:14px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.group-letter{width:26px;height:26px;border-radius:50%;background:#dbeafe;color:#1a56db;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+/* STANDINGS TABLE */
+.standings-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px}
+.standings-table th{color:#888;font-weight:600;padding:4px 3px;text-align:center;border-bottom:1px solid #eee;font-size:11px}
+.standings-table th:first-child{text-align:left}
+.standings-table td{padding:6px 3px;text-align:center;border-bottom:1px solid #f0f0f0;font-size:13px}
+.standings-table td:first-child{text-align:left;font-weight:600}
+.standings-table tr:last-child td{border-bottom:none}
+.standings-table tr.qualified td:first-child::before{content:"✓ ";color:#16a34a;font-weight:700}
+.standings-table tr.qualified{background:#f0fdf4}
+
+/* MATCHES */
+.match-list{display:flex;flex-direction:column;gap:7px}
+.match{display:flex;align-items:center;gap:6px;padding:10px 10px;background:#f7f8fa;border-radius:10px;border:1px solid #ebebeb}
+.match-teams{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.match-team-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-date{font-size:11px;color:#999;white-space:nowrap}
+.score-wrap{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.score-input{width:40px;height:40px;border:1.5px solid #ccc;border-radius:8px;text-align:center;font-size:18px;font-weight:700;background:#fff;color:#1a1a1a;padding:0;-webkit-appearance:none;appearance:none}
+.score-input:focus{outline:none;border-color:#1a56db;box-shadow:0 0 0 2px rgba(26,86,219,0.15)}
+.score-dash{color:#bbb;font-size:14px;font-weight:700}
+
+/* KO MATCHES */
+.ko-grid{display:flex;flex-direction:column;gap:8px}
+.ko-match{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ko-teams{display:flex;flex-direction:column;gap:8px}
+.ko-team{display:flex;align-items:center;gap:8px}
+.ko-label{font-size:13px;color:#444;font-weight:500;flex:1;line-height:1.3}
+.ko-score{width:44px;height:44px;border:1.5px solid #ccc;border-radius:8px;text-align:center;font-size:20px;font-weight:700;background:#fff;color:#1a1a1a;padding:0;-webkit-appearance:none;appearance:none;flex-shrink:0}
+.ko-score:focus{outline:none;border-color:#1a56db;box-shadow:0 0 0 2px rgba(26,86,219,0.15)}
+.ko-date{font-size:11px;color:#aaa;margin-top:7px}
+.ko-divider{border:none;border-top:1px dashed #e0e0e0;margin:6px 0}
+
+/* FINAL */
+.final-box{max-width:440px;margin:0 auto;text-align:center;padding:0.5rem 0}
+.champion-box{display:none;background:#fef9c3;border:2px solid #fde047;border-radius:16px;padding:1.5rem;margin-top:1rem;text-align:center}
+.champion-label{font-size:13px;font-weight:700;color:#854d0e;letter-spacing:1px;margin-bottom:6px}
+.champion-name{font-size:22px;font-weight:700;color:#1a1a1a}
+.note{font-size:11px;color:#aaa;text-align:center;margin-top:10px}
+
+/* Section title for KO rounds */
+.round-title{font-size:15px;font-weight:700;color:#333;margin:12px 0 8px;padding-bottom:6px;border-bottom:2px solid #1a56db;display:flex;align-items:center;gap:6px}
+
+@media(min-width:600px){
+  .group-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+  .ko-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+  .score-input{width:36px;height:36px;font-size:16px}
+  .ko-score{width:40px;height:40px;font-size:18px}
+}
+@media(min-width:900px){
+  .group-grid{grid-template-columns:repeat(3,1fr)}
+  .ko-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header-row">
+  <div class="trophy">🏆</div>
+  <div>
+    <h1>Copa Mundial FIFA 2026</h1>
+    <div class="subtitle">11 jun – 19 jul &nbsp;•&nbsp; EUA, Canadá, México &nbsp;•&nbsp; 48 equipos &nbsp;•&nbsp; 104 partidos</div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card"><div class="stat-num" id="s-played">0</div><div class="stat-lbl">Jugados</div></div>
+  <div class="stat-card"><div class="stat-num" id="s-goals">0</div><div class="stat-lbl">Goles</div></div>
+  <div class="stat-card"><div class="stat-num">12</div><div class="stat-lbl">Grupos</div></div>
+  <div class="stat-card"><div class="stat-num">48</div><div class="stat-lbl">Equipos</div></div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('fase-grupos')">⚽ Grupos</button>
+    <button class="tab" onclick="showTab('r32')">🔵 Ronda 32</button>
+    <button class="tab" onclick="showTab('cuartos')">⚡ Cuartos</button>
+    <button class="tab" onclick="showTab('semis')">🔥 Semis</button>
+    <button class="tab" onclick="showTab('final')">🏆 Final</button>
+  </div>
+</div>
+
+<div id="fase-grupos" class="section active"></div>
+<div id="r32" class="section"></div>
+<div id="cuartos" class="section"></div>
+<div id="semis" class="section"></div>
+<div id="final" class="section"></div>
+
+<script>
+const GROUPS = {
+  A:{teams:['México','Sudáfrica','Corea del Sur','Polonia'],matches:[
+    {d:'11 jun',t1:0,t2:1,v:'Ciudad de México'},{d:'15 jun',t1:2,t2:3,v:'Dallas'},
+    {d:'19 jun',t1:0,t2:2,v:'Guadalajara'},{d:'19 jun',t1:1,t2:3,v:'Philadelphia'},
+    {d:'26 jun',t1:0,t2:3,v:'Dallas'},{d:'26 jun',t1:1,t2:2,v:'Kansas City'}]},
+  B:{teams:['Canadá','Bosnia-Herz.','Venezuela','Portugal'],matches:[
+    {d:'12 jun',t1:0,t2:1,v:'Toronto'},{d:'13 jun',t1:2,t2:3,v:'Kansas City'},
+    {d:'17 jun',t1:0,t2:2,v:'Vancouver'},{d:'17 jun',t1:1,t2:3,v:'Kansas City'},
+    {d:'24 jun',t1:0,t2:3,v:'Vancouver'},{d:'24 jun',t1:1,t2:2,v:'Toronto'}]},
+  C:{teams:['España','Cabo Verde','Arabia Saudita','Chequia'],matches:[
+    {d:'15 jun',t1:0,t2:1,v:'Atlanta'},{d:'14 jun',t1:2,t2:3,v:'Philadelphia'},
+    {d:'21 jun',t1:0,t2:2,v:'Atlanta'},{d:'18 jun',t1:1,t2:3,v:'Atlanta'},
+    {d:'25 jun',t1:0,t2:3,v:'Philadelphia'},{d:'25 jun',t1:1,t2:2,v:'Miami'}]},
+  D:{teams:['EUA','Paraguay','Australia','Türkiye'],matches:[
+    {d:'12 jun',t1:0,t2:1,v:'Los Ángeles'},{d:'13 jun',t1:2,t2:3,v:'Houston'},
+    {d:'16 jun',t1:0,t2:2,v:'Houston'},{d:'17 jun',t1:1,t2:3,v:'Dallas'},
+    {d:'23 jun',t1:0,t2:3,v:'Dallas'},{d:'23 jun',t1:1,t2:2,v:'Los Ángeles'}]},
+  E:{teams:['Japón','Camerún','Chile','Croacia'],matches:[
+    {d:'14 jun',t1:0,t2:1,v:'Miami'},{d:'14 jun',t1:2,t2:3,v:'Boston'},
+    {d:'18 jun',t1:0,t2:2,v:'Los Ángeles'},{d:'19 jun',t1:1,t2:3,v:'Dallas'},
+    {d:'25 jun',t1:0,t2:3,v:'Miami'},{d:'25 jun',t1:1,t2:2,v:'Houston'}]},
+  F:{teams:['Marruecos','Haití','Uruguay','Serbia'],matches:[
+    {d:'15 jun',t1:0,t2:1,v:'Dallas'},{d:'16 jun',t1:2,t2:3,v:'Houston'},
+    {d:'20 jun',t1:0,t2:2,v:'San Francisco'},{d:'20 jun',t1:1,t2:3,v:'Atlanta'},
+    {d:'24 jun',t1:0,t2:3,v:'Atlanta'},{d:'24 jun',t1:1,t2:2,v:'Houston'}]},
+  G:{teams:['Bélgica','Egipto','Irán','Nueva Zelanda'],matches:[
+    {d:'15 jun',t1:0,t2:1,v:'Miami'},{d:'15 jun',t1:2,t2:3,v:'Seattle'},
+    {d:'20 jun',t1:0,t2:2,v:'Seattle'},{d:'20 jun',t1:1,t2:3,v:'Houston'},
+    {d:'26 jun',t1:0,t2:3,v:'Miami'},{d:'26 jun',t1:1,t2:2,v:'Kansas City'}]},
+  H:{teams:['Argentina','Islandia','Nigeria','Ecuador'],matches:[
+    {d:'15 jun',t1:0,t2:1,v:'Nueva York'},{d:'16 jun',t1:2,t2:3,v:'San Francisco'},
+    {d:'21 jun',t1:0,t2:2,v:'Nueva York'},{d:'21 jun',t1:1,t2:3,v:'Los Ángeles'},
+    {d:'26 jun',t1:0,t2:3,v:'Chicago'},{d:'26 jun',t1:1,t2:2,v:'Miami'}]},
+  I:{teams:['Francia','Senegal','Irak','Noruega'],matches:[
+    {d:'16 jun',t1:0,t2:1,v:'Los Ángeles'},{d:'16 jun',t1:2,t2:3,v:'Toronto'},
+    {d:'22 jun',t1:0,t2:2,v:'Toronto'},{d:'21 jun',t1:1,t2:3,v:'Nueva York'},
+    {d:'26 jun',t1:0,t2:3,v:'San Francisco'},{d:'26 jun',t1:1,t2:2,v:'Miami'}]},
+  J:{teams:['Brasil','Suiza','Ghana','Colombia'],matches:[
+    {d:'17 jun',t1:0,t2:1,v:'Houston'},{d:'17 jun',t1:2,t2:3,v:'Los Ángeles'},
+    {d:'22 jun',t1:0,t2:2,v:'Dallas'},{d:'22 jun',t1:1,t2:3,v:'Nueva York'},
+    {d:'27 jun',t1:0,t2:3,v:'Boston'},{d:'27 jun',t1:1,t2:2,v:'Los Ángeles'}]},
+  K:{teams:['Alemania','Ecuador (2)','Eslovaquia','Costa Rica'],matches:[
+    {d:'18 jun',t1:0,t2:1,v:'Dallas'},{d:'18 jun',t1:2,t2:3,v:'Boston'},
+    {d:'23 jun',t1:0,t2:2,v:'Kansas City'},{d:'23 jun',t1:1,t2:3,v:'Seattle'},
+    {d:'27 jun',t1:0,t2:3,v:'Philadelphia'},{d:'27 jun',t1:1,t2:2,v:'Boston'}]},
+  L:{teams:['Inglaterra','Túnez','Eslovenia','Cuba'],matches:[
+    {d:'20 jun',t1:0,t2:1,v:'Nueva York'},{d:'19 jun',t1:2,t2:3,v:'Dallas'},
+    {d:'24 jun',t1:0,t2:2,v:'Los Ángeles'},{d:'24 jun',t1:1,t2:3,v:'Boston'},
+    {d:'27 jun',t1:0,t2:3,v:'Miami'},{d:'27 jun',t1:1,t2:2,v:'Seattle'}]}
+};
+
+const R32=[
+  {label:'M73',d:'28 jun',t1:'2° Grupo A',t2:'2° Grupo B',v:'Los Ángeles'},
+  {label:'M74',d:'28 jun',t1:'1° Grupo C',t2:'3° mejor EFGHIJ',v:'Dallas'},
+  {label:'M75',d:'28 jun',t1:'1° Grupo A',t2:'3° mejor BCDEF',v:'Houston'},
+  {label:'M76',d:'29 jun',t1:'2° Grupo C',t2:'2° Grupo D',v:'San Francisco'},
+  {label:'M77',d:'29 jun',t1:'1° Grupo E',t2:'3° mejor GHIJK',v:'Toronto'},
+  {label:'M78',d:'29 jun',t1:'1° Grupo F',t2:'3° mejor ABCDE',v:'Vancouver'},
+  {label:'M79',d:'30 jun',t1:'2° Grupo E',t2:'2° Grupo F',v:'Monterrey'},
+  {label:'M80',d:'30 jun',t1:'1° Grupo B',t2:'3° mejor FGHIJ',v:'Kansas City'},
+  {label:'M81',d:'1 jul',t1:'1° Grupo D',t2:'3° mejor BEIJK',v:'San Francisco'},
+  {label:'M82',d:'1 jul',t1:'1° Grupo G',t2:'3° mejor AEHIJ',v:'Seattle'},
+  {label:'M83',d:'2 jul',t1:'2° Grupo K',t2:'2° Grupo L',v:'Toronto'},
+  {label:'M84',d:'2 jul',t1:'1° Grupo H',t2:'2° Grupo J',v:'Los Ángeles'},
+  {label:'M85',d:'2 jul',t1:'1° Grupo B',t2:'3° mejor EFGIJ',v:'Vancouver'},
+  {label:'M86',d:'3 jul',t1:'1° Grupo J',t2:'2° Grupo H',v:'Miami'},
+  {label:'M87',d:'3 jul',t1:'1° Grupo K',t2:'3° mejor DEIJL',v:'Kansas City'},
+  {label:'M88',d:'3 jul',t1:'2° Grupo D',t2:'2° Grupo G',v:'Dallas'},
+  {label:'M89',d:'4 jul',t1:'1° Grupo L',t2:'3° mejor ACGIJ',v:'Nueva York'},
+  {label:'M90',d:'4 jul',t1:'1° Grupo I',t2:'2° Grupo K',v:'Houston'},
+  {label:'M91',d:'5 jul',t1:'2° Grupo I',t2:'2° Grupo L',v:'Seattle'},
+  {label:'M92',d:'5 jul',t1:'1° Grupo A',t2:'2° Grupo C',v:'Philadelphia'},
+  {label:'M93',d:'5 jul',t1:'2° Grupo B',t2:'2° Grupo E',v:'Toronto'},
+  {label:'M94',d:'5 jul',t1:'1° Grupo J',t2:'2° Grupo L',v:'Boston'},
+  {label:'M95',d:'6 jul',t1:'1° Grupo D',t2:'2° Grupo F',v:'Dallas'},
+  {label:'M96',d:'6 jul',t1:'1° Grupo G',t2:'2° Grupo I',v:'San Francisco'},
+];
+
+const CUARTOS=[
+  {label:'CF1',d:'9 jul',t1:'W M73',t2:'W M74',v:'Houston'},
+  {label:'CF2',d:'9 jul',t1:'W M75',t2:'W M76',v:'San Francisco'},
+  {label:'CF3',d:'10 jul',t1:'W M77',t2:'W M78',v:'Dallas'},
+  {label:'CF4',d:'10 jul',t1:'W M79',t2:'W M80',v:'Seattle'},
+  {label:'CF5',d:'11 jul',t1:'W M81',t2:'W M82',v:'Los Ángeles'},
+  {label:'CF6',d:'11 jul',t1:'W M83',t2:'W M84',v:'Kansas City'},
+  {label:'CF7',d:'12 jul',t1:'W M85',t2:'W M86',v:'Toronto'},
+  {label:'CF8',d:'12 jul',t1:'W M87',t2:'W M88',v:'Nueva York'},
+];
+
+const SEMIS=[
+  {label:'SF1',d:'15 jul',t1:'W CF1',t2:'W CF2',v:'Houston'},
+  {label:'SF2',d:'15 jul',t1:'W CF3',t2:'W CF4',v:'Los Ángeles'},
+  {label:'SF3',d:'16 jul',t1:'W CF5',t2:'W CF6',v:'Dallas'},
+  {label:'SF4',d:'16 jul',t1:'W CF7',t2:'W CF8',v:'Nueva York'},
+];
+
+const scores=JSON.parse(localStorage.getItem('wc2026')||'{}');
+function saveScores(){localStorage.setItem('wc2026',JSON.stringify(scores));}
+function key(s,i,t){return `${s}|${i}|${t}`;}
+function getScore(s,i,t){return scores[key(s,i,t)]??'';}
+function setScore(s,i,t,v){
+  if(v==='')delete scores[key(s,i,t)];
+  else scores[key(s,i,t)]=v;
+  saveScores();updateStats();
+  if(s==='g')updateStandings();
+}
+
+function updateStats(){
+  let played=0,goals=0;
+  Object.entries(scores).forEach(([k,v])=>{
+    const p=k.split('|');
+    if(p[2]==='a'&&v!==''){played++;goals+=parseInt(v)||0;}
+    else if(p[2]==='b'&&v!==''){goals+=parseInt(v)||0;}
+  });
+  document.getElementById('s-played').textContent=played;
+  document.getElementById('s-goals').textContent=goals;
+}
+
+function updateStandings(){
+  Object.keys(GROUPS).forEach(g=>{
+    const grp=GROUPS[g];
+    const pts=[0,0,0,0],gf=[0,0,0,0],ga=[0,0,0,0],pj=[0,0,0,0];
+    grp.matches.forEach((m,mi)=>{
+      const sa=getScore('g',`${g}-${mi}`,'a'),sb=getScore('g',`${g}-${mi}`,'b');
+      if(sa===''||sb==='')return;
+      const a=parseInt(sa),b=parseInt(sb);
+      pj[m.t1]++;pj[m.t2]++;
+      gf[m.t1]+=a;ga[m.t1]+=b;gf[m.t2]+=b;ga[m.t2]+=a;
+      if(a>b)pts[m.t1]+=3;else if(b>a)pts[m.t2]+=3;else{pts[m.t1]++;pts[m.t2]++;}
+    });
+    const order=[0,1,2,3].sort((a,b)=>pts[b]-pts[a]||((gf[b]-ga[b])-(gf[a]-ga[a]))||gf[b]-gf[a]);
+    [0,1,2,3].forEach(i=>{
+      const row=document.getElementById(`st-${g}-${i}`);if(!row)return;
+      row.cells[1].textContent=pj[i];row.cells[2].textContent=pts[i];
+      row.cells[3].textContent=gf[i];row.cells[4].textContent=ga[i];
+      row.cells[5].textContent=gf[i]-ga[i];
+      row.classList.toggle('qualified',order.indexOf(i)<2);
+    });
+  });
+}
+
+function makeInput(s,id,t,cls){
+  const inp=document.createElement('input');
+  inp.type='number';inp.min=0;inp.max=99;inp.className=cls;
+  inp.placeholder='-';inp.value=getScore(s,id,t);
+  inp.inputMode='numeric';inp.pattern='[0-9]*';
+  inp.addEventListener('change',()=>setScore(s,id,t,inp.value===''?'':inp.value));
+  return inp;
+}
+
+function buildGroups(){
+  const cont=document.getElementById('fase-grupos');
+  const grid=document.createElement('div');grid.className='group-grid';
+  Object.entries(GROUPS).forEach(([letter,grp])=>{
+    const card=document.createElement('div');card.className='group-card';
+    const title=document.createElement('div');title.className='group-title';
+    title.innerHTML=`<span class="group-letter">${letter}</span>Grupo ${letter}`;
+    card.appendChild(title);
+    const tbl=document.createElement('table');tbl.className='standings-table';
+    tbl.innerHTML='<thead><tr><th>Equipo</th><th>PJ</th><th>Pts</th><th>GF</th><th>GC</th><th>DG</th></tr></thead>';
+    const tbody=document.createElement('tbody');
+    grp.teams.forEach((t,i)=>{
+      const tr=document.createElement('tr');tr.id=`st-${letter}-${i}`;
+      tr.innerHTML=`<td>${t}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>`;
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);card.appendChild(tbl);
+    const ml=document.createElement('div');ml.className='match-list';
+    grp.matches.forEach((m,mi)=>{
+      const row=document.createElement('div');row.className='match';
+      const left=document.createElement('div');left.className='match-teams';
+      const d=document.createElement('div');d.className='match-date';d.textContent=`${m.d} • ${m.v}`;
+      const t=document.createElement('div');
+      t.innerHTML=`<span class="match-team-name">${grp.teams[m.t1]}</span> <span style="color:#aaa;font-size:11px;">vs</span> <span class="match-team-name">${grp.teams[m.t2]}</span>`;
+      left.append(d,t);
+      const sw=document.createElement('div');sw.className='score-wrap';
+      const inpA=makeInput('g',`${letter}-${mi}`,'a','score-input');
+      const dash=document.createElement('span');dash.className='score-dash';dash.textContent='–';
+      const inpB=makeInput('g',`${letter}-${mi}`,'b','score-input');
+      sw.append(inpA,dash,inpB);
+      row.append(left,sw);ml.appendChild(row);
+    });
+    card.appendChild(ml);grid.appendChild(card);
+  });
+  cont.appendChild(grid);
+}
+
+function buildKO(sectionId,matches){
+  const cont=document.getElementById(sectionId);
+  const grid=document.createElement('div');grid.className='ko-grid';
+  matches.forEach((m,i)=>{
+    const div=document.createElement('div');div.className='ko-match';
+    const teams=document.createElement('div');teams.className='ko-teams';
+    [['t1','a'],['t2','b']].forEach(([tk,side],ti)=>{
+      const row=document.createElement('div');row.className='ko-team';
+      const lbl=document.createElement('span');lbl.className='ko-label';
+      lbl.textContent=`${m.label}: ${m[tk]}`;
+      const inp=makeInput(sectionId,i,side,'ko-score');
+      row.append(lbl,inp);
+      if(ti===0){
+        teams.appendChild(row);
+        const hr=document.createElement('hr');hr.className='ko-divider';
+        teams.appendChild(hr);
+      } else {
+        teams.appendChild(row);
+      }
+    });
+    const dateDiv=document.createElement('div');dateDiv.className='ko-date';
+    dateDiv.textContent=`${m.d} • ${m.v}`;
+    div.append(teams,dateDiv);grid.appendChild(div);
+  });
+  cont.appendChild(grid);
+}
+
+function buildFinal(){
+  const cont=document.getElementById('final');
+  const finA=getScore('final',0,'a'),finB=getScore('final',0,'b');
+  cont.innerHTML=`<div class="final-box">
+    <div style="font-size:44px;margin-bottom:8px">🏆</div>
+    <div style="font-size:22px;font-weight:700;margin-bottom:4px">Gran Final</div>
+    <div style="font-size:13px;color:#888;margin-bottom:1.2rem">19 jul 2026 • Estadio MetLife, New Jersey</div>
+    <div class="ko-match" style="max-width:380px;margin:0 auto 1rem">
+      <div class="ko-teams">
+        <div class="ko-team"><span class="ko-label">Campeon Semifinal 1/2</span><input class="ko-score" type="number" inputmode="numeric" min="0" max="99" placeholder="-" id="fin-a" value="${finA}"></div>
+        <hr class="ko-divider">
+        <div class="ko-team"><span class="ko-label">Campeon Semifinal 3/4</span><input class="ko-score" type="number" inputmode="numeric" min="0" max="99" placeholder="-" id="fin-b" value="${finB}"></div>
+      </div>
+    </div>
+    <div id="champion-box" class="champion-box">
+      <div style="font-size:36px;margin-bottom:6px">🥇</div>
+      <div class="champion-label">CAMPEON MUNDIAL 2026</div>
+      <div class="champion-name" id="champion-name">-</div>
+    </div>
+    <div class="note">Los resultados se guardan automaticamente</div>
+  </div>`;
+  function checkFinal(){
+    const va=parseInt(document.getElementById('fin-a').value);
+    const vb=parseInt(document.getElementById('fin-b').value);
+    setScore('final',0,'a',document.getElementById('fin-a').value);
+    setScore('final',0,'b',document.getElementById('fin-b').value);
+    const box=document.getElementById('champion-box');
+    if(!isNaN(va)&&!isNaN(vb)&&va!==vb){
+      box.style.display='block';
+      document.getElementById('champion-name').textContent=va>vb?'Equipo SF1/SF2':'Equipo SF3/SF4';
+    }else box.style.display='none';
+  }
+  document.getElementById('fin-a').addEventListener('change',checkFinal);
+  document.getElementById('fin-b').addEventListener('change',checkFinal);
+  if(finA!==''&&finB!=='')checkFinal();
+}
+
+function showTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const labels={'fase-grupos':'⚽ Grupos','r32':'🔵 Ronda 32','cuartos':'⚡ Cuartos','semis':'🔥 Semis','final':'🏆 Final'};
+  document.querySelectorAll('.tab').forEach(t=>{if(t.textContent.trim()===labels[id])t.classList.add('active');});
+}
+
+buildGroups();buildKO('r32',R32);buildKO('cuartos',CUARTOS);buildKO('semis',SEMIS);buildFinal();
+updateStats();updateStandings();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"5070e21320304a1ba2b0a42ce9682840","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
